@@ -12,13 +12,13 @@ import android.graphics.Canvas
 import android.graphics.Color
 
 val nodes : Int = 5
-
+val speed : Float = 0.05f
 fun Canvas.drawLADMNode(i : Int, scale : Float , paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
     val gap : Float = w / nodes
     val sc1 : Float = Math.min(0.5f, scale) * 2
-    val sc2 : Float = Math.min(0.5f, Math.max(0f, scale)) * 2
+    val sc2 : Float = Math.min(0.5f, Math.max(0f, scale - 0.5f)) * 2
     val size : Float = gap / 3
     val index : Int = i % 2
     val factor : Int = ((i) / 2)
@@ -56,7 +56,7 @@ class LADMView (ctx : Context) : View(ctx) {
     data class State(var scale : Float = 0f, var dir : Float = 0f, var prevScale : Float = 0f) {
 
         fun update(cb : (Float) -> Unit) {
-            this.scale += 0.1f * this.dir
+            this.scale += speed * this.dir
             if (Math.abs(this.scale - this.prevScale) > 1) {
                 this.scale = this.prevScale + this.dir
                 this.dir = 0f
@@ -98,6 +98,51 @@ class LADMView (ctx : Context) : View(ctx) {
 
                 }
             }
+        }
+    }
+
+    data class LADMNode(var i : Int, val state : State = State()) {
+
+        private var next : LADMNode? = null
+
+        private var prev : LADMNode? = null
+
+        fun update(cb : (Int, Float) -> Unit) {
+            state.update {
+                cb(i, it)
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
+        }
+
+        private fun addNeighbor() {
+            if (i < nodes - 1) {
+                this.next = LADMNode(i + 1)
+                this.next?.prev = this
+            }
+        }
+
+        init {
+            addNeighbor()
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawLADMNode(i, state.scale, paint)
+            next?.draw(canvas, paint)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : LADMNode {
+            var curr : LADMNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }
