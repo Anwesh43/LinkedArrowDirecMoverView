@@ -9,9 +9,33 @@ import android.view.MotionEvent
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.Canvas
+import android.graphics.Color
 
 val nodes : Int = 5
 
+fun Canvas.drawLADMNode(i : Int, scale : Float , paint : Paint) {
+    val w : Float = width.toFloat()
+    val h : Float = height.toFloat()
+    val gap : Float = w / nodes
+    val sc1 : Float = Math.min(0.5f, scale) * 2
+    val sc2 : Float = Math.min(0.5f, Math.max(0f, scale)) * 2
+    val size : Float = gap / 3
+    val index : Int = i % 2
+    val factor : Int = ((i) / 2)
+    paint.strokeWidth = Math.min(w, h) / 50
+    paint.strokeCap = Paint.Cap.ROUND
+    paint.color = Color.parseColor("#4CAF50")
+    save()
+    translate(gap * factor + gap / 2 + gap * sc2 * index, gap * factor + gap * index + gap/2 + gap * sc2 * (1 - index))
+    rotate(90f * (sc1 * (1 - index) + (1 - sc1) * index ))
+    for (j in 0..1) {
+        save()
+        scale(1f, 1f - 2 * j)
+        drawLine(0f, 0f, -size, -size, paint)
+        restore()
+    }
+    restore()
+}
 class LADMView (ctx : Context) : View(ctx) {
 
     private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
