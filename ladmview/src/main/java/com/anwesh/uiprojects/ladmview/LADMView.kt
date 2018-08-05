@@ -169,4 +169,27 @@ class LADMView (ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : LADMView) {
+
+        private val ladm : LinkedLADM = LinkedLADM(0)
+
+        private val animator : Animator = Animator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#212121"))
+            ladm.draw(canvas, paint)
+            animator.animate {
+                ladm.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            ladm.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
