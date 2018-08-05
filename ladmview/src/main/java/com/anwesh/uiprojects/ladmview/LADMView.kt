@@ -4,6 +4,7 @@ package com.anwesh.uiprojects.ladmview
  * Created by anweshmishra on 06/08/18.
  */
 
+import android.app.Activity
 import android.view.View
 import android.view.MotionEvent
 import android.content.Context
@@ -192,6 +193,14 @@ class LADMView (ctx : Context) : View(ctx) {
             ladm.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object {
+        fun create(activity : Activity) : LADMView {
+            val view : LADMView = LADMView(activity)
+            activity.setContentView(view)
+            return view
         }
     }
 }
