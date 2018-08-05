@@ -17,10 +17,10 @@ val speed : Float = 0.05f
 fun Canvas.drawLADMNode(i : Int, scale : Float , paint : Paint) {
     val w : Float = width.toFloat()
     val h : Float = height.toFloat()
-    val gap : Float = w / nodes
+    val gap : Float =  1.5f * w / nodes
     val sc1 : Float = Math.min(0.5f, scale) * 2
     val sc2 : Float = Math.min(0.5f, Math.max(0f, scale - 0.5f)) * 2
-    val size : Float = gap / 3
+    val size : Float = (gap) / 6
     val index : Int = i % 2
     val factor : Int = ((i) / 2)
     paint.strokeWidth = Math.min(w, h) / 50
